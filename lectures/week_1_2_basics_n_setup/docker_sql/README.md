@@ -79,3 +79,19 @@ docker run -it \
     --db=ny_taxi \
     --table_name=yellow_taxi_data \
     --url=${URL}
+
+# Ingest data for homework
+
+>> would work fine but green dataset has different column names, so using jupyter to ingest data, instead of the following
+
+URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz"
+docker run -it \
+    --network=docker_sql_default \
+    taxi_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=docker_sql-pgdatabase-1 \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=green_taxi_data \
+    --url=${URL}
