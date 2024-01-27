@@ -64,3 +64,18 @@ docker run -it \
     --db=ny_taxi \
     --table_name=yellow_taxi_data \
     --url=${URL}
+
+## Populate volume w data after running w docker compose
+- get network by checking `docker network ls`
+- get host name by checking `docker ps` > NAMES
+URL="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
+docker run -it \
+    --network=docker_sql_default \
+    taxi_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=docker_sql-pgdatabase-1 \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=yellow_taxi_data \
+    --url=${URL}
