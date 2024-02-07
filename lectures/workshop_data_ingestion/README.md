@@ -13,3 +13,5 @@ https://www.youtube.com/watch?v=oLXhBM7nf2Q&ab_channel=DataTalksClub%E2%AC%9B
 
 https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/cohorts/2024/workshops/dlt.md
 
+
+https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/cohorts/2024/workshops/dlt_resources/incremental_loading.png
