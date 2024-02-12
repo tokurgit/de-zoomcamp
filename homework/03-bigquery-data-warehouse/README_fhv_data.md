@@ -1,5 +1,6 @@
 
 **Create an external table using the fhv 2019 data.**
+
 ```sql
 CREATE OR REPLACE EXTERNAL TABLE `bq-data-warehouse-413819.fhv_hw.fhv_tripdata`
 OPTIONS (
