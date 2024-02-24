@@ -27,6 +27,9 @@ You'll need to have completed the ["Build the first dbt models"](https://www.you
 - It applies a _limit 100_ only to our staging models
 - Nothing
 
+## Answer 1:
+- It applies a _limit 100_ only to our staging models
+
 ### Question 2: 
 
 **What is the code that our CI job will run?**  
@@ -36,21 +39,28 @@ You'll need to have completed the ["Build the first dbt models"](https://www.you
 - The code from any development branch that has been opened based on main
 - The code from a development branch requesting a merge to main
 
+## Answer 2:
+- The code from a development branch requesting a merge to main
 
 ### Question 3: 
 
 **What is the count of records in the model fact_fhv_trips after running all dependencies with the test run variable disabled (:false)?**  
-Create a staging model for the fhv data, similar to the ones made for yellow and green data. Add an additional filter for keeping only records with pickup time in year 2019.
-Do not add a deduplication step. Run this models without limits (is_test_run: false).
+1. Create a staging model for the fhv data, similar to the ones made for yellow and green data.
+2.  Add an additional filter for keeping only records with pickup time in year 2019.
+3.Do not add a deduplication step. Run this models without limits (is_test_run: false).
 
-Create a core model similar to fact trips, but selecting from stg_fhv_tripdata and joining with dim_zones.
-Similar to what we've done in fact_trips, keep only records with known pickup and dropoff locations entries for pickup and dropoff locations. 
-Run the dbt model without limits (is_test_run: false).
+4. Create a core model similar to fact trips, but selecting from stg_fhv_tripdata and joining with dim_zones.
+5. Similar to what we've done in fact_trips, keep only records with known pickup and dropoff locations entries for pickup and dropoff locations. 
+6. Run the dbt model without limits (is_test_run: false).
 
 - 12998722
 - 22998722
 - 32998722
 - 42998722
+
+## Answer 3:
+- 22998722
+
 
 ### Question 4: 
 
@@ -63,6 +73,8 @@ Create a dashboard with some tiles that you find interesting to explore the data
 - Yellow
 - FHV and Green
 
+## Answer 4:
+- Yellow
 
 ## Submitting the solutions
 

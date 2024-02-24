@@ -4,9 +4,6 @@ import requests
 import pandas as pd
 from google.cloud import storage
 
-# Courtesy of the script https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/03-data-warehouse/extras/web_to_gcs.py
-
-
 """
 Pre-reqs: 
 1. `pip install pandas pyarrow google-cloud-storage`
@@ -15,10 +12,9 @@ Pre-reqs:
 """
 
 # services = ['fhv','green','yellow']
-# init_url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/'
-init_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/"
+init_url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/'
 # switch out the bucketname
-BUCKET = os.environ.get("GCP_GCS_BUCKET")
+BUCKET = os.environ.get("GCP_GCS_BUCKET", "mage-zoomcamp-rekt")
 
 
 def upload_to_gcs(bucket, object_name, local_file):
@@ -27,8 +23,8 @@ def upload_to_gcs(bucket, object_name, local_file):
     """
     # # WORKAROUND to prevent timeout for files > 6 MB on 800 kbps upload speed.
     # # (Ref: https://github.com/googleapis/python-storage/issues/74)
-    # storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
-    # storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
+    storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
+    storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
 
     client = storage.Client()
     bucket = client.bucket(bucket)
@@ -44,33 +40,47 @@ def web_to_gcs(year, service):
         month = month[-2:]
 
         # csv file_name
-        "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2022-01.parquet"
-        # file_name = f"{service}_tripdata_{year}-{month}.csv.gz"
-        file_name = f"{service}_tripdata_{year}-{month}.parquet"
-
+        file_name = f"{service}_tripdata_{year}-{month}.csv.gz"
 
         # download it using requests via a pandas df
-        # request_url = f"{init_url}{service}/{file_name}"
-        request_url = f"{init_url}/{file_name}"
+        request_url = f"{init_url}{service}/{file_name}"
         r = requests.get(request_url)
         with open(file_name, 'wb') as f:
             f.write(r.content)
             print(f"Local: {file_name}")
 
         # read it back into a parquet file
-        df = pd.read_parquet(file_name)
-        file_name = file_name.replace('.parquet', 'fixed.parquet')
+        df = pd.read_csv(file_name, compression='gzip').astype({
+            "PUlocationID": "Int64",
+            "DOlocationID": "Int64",
+        })
+
+        file_name = file_name.replace('.csv.gz', '.parquet')
         df.to_parquet(file_name, engine='pyarrow')
         print(f"Parquet: {file_name}")
+
         # upload it to gcs 
         upload_to_gcs(BUCKET, f"{service}/{file_name}", file_name)
         print(f"GCS: {service}/{file_name}")
 
 
 # web_to_gcs('2019', 'green')
-web_to_gcs('2022', 'green')
+# web_to_gcs('2020', 'green')
 # web_to_gcs('2019', 'yellow')
 # web_to_gcs('2020', 'yellow')
-# web_to_gcs('2019', 'fhv')
+web_to_gcs('2019', 'fhv')
 
 
+"""
+Then - create external table in BQ
+-- Creating external table referring to gcs path
+CREATE OR REPLACE EXTERNAL TABLE `mage-de-zoomcamp.trips_data_all.fhv_external_data`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://mage-zoomcamp-rekt/fhv/fhv_tripdata_2019-*.parquet']
+);
+
+-- Create BQ table from the external one
+CREATE OR REPLACE TABLE `mage-de-zoomcamp.trips_data_all.fhv_data`
+AS SELECT * FROM `mage-de-zoomcamp.trips_data_all.fhv_external_data`;
+"""
