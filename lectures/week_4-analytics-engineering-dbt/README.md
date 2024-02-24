@@ -9,3 +9,5 @@ The following datasets ingested from the course Datasets list:
 Yellow taxi data - Years 2019 and 2020
 Green taxi data - Years 2019 and 2020
 fhv data - Year 2019.
+
+The lecture follow-along is within repo https://github.com/tokurgit/analytics-engineering-dbt - private repo
